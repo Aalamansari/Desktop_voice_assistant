@@ -1,6 +1,4 @@
 from datetime import datetime
-from http import server
-from winreg import QueryReflectionKey
 import pyttsx3
 import speech_recognition as sr
 import os    # To get the access to our windows application like notepad
@@ -190,6 +188,29 @@ if __name__ =="__main__":
             # time.sleep(1)
             pyautogui.keyUp("alt")
 
+        elif "my location" in query:
+            speak("wait sir, let me check")
+            try:
+                 ip = requests.get('https://api.ipify.org').content.decode('utf8')     #requesting my ip address from the ip-api site and decoding it to utf8 format
+                 get_response =  requests.get("http://ip-api.com/json/"+ip).json()    #requesting my location info in byte string format from ip-api server and converting it into str dict type using json() method
+                 speak(f"Sir, we are currently in {get_response['city']} of {get_response['regionName']} having postal code {get_response['zip']}")
+            except Exception as e:
+                speak("Sir due to network issue I am not able to request data from server")
+                speak("Please try again sometime later")       
+
+        elif "screenshot" in query:
+            try:
+                speak("Sir, please tell me with which name I should save this screenshot?")
+                name = takecommand()
+                speak("Taking the screenshot")
+                time.sleep(3)
+                img = pyautogui.screenshot()                                         #using pyautogui to take a screenshot
+                img.save(f"{name}.png")                                              #using pyautogui to save the screenshot in DESKTOP_ASSISTANT folder
+                speak("Screenshot has been saved in our main folder")   
+            except Exception as e:
+                 speak("Sir due to some error I am not able to take screenshot")
+                 speak("Please try again sometime later")  
+           
 
         if "no thanks" in query:
             speak("Pleasure to be at your service")
