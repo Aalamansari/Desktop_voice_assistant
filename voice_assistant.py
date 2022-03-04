@@ -14,6 +14,7 @@ import requests
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 engine.setProperty('voices',voices[0].id)
+engine.setProperty("rate", 192)
 
 def speak (audio):          #Function that will convert text to speech
     engine.say(audio)
@@ -77,16 +78,21 @@ def news():
     for i in range(5):
         speak(f"{number[i]} news is that {headline[i]}")    
 
-
+        
 
 if __name__ =="__main__":
     intro()
     
     # if 1:  
-    while True:
+    while True:    #infinite loop
         query = takecommand().lower()
 
-        if 'wikipedia' in query:
+        if "tell me about yourself" in query:
+             speak("Sir, I am Zion.")
+             speak("An desktop voice assistant created for the purpose of serving you.")
+             speak("I am able to listen to your commands with the help of Speech Recognition module and able to reply to them with the help of different modules provided by Python ")
+
+        elif 'wikipedia' in query:
             speak('Searching wikipedia...')
             query = query.replace("wikipedia", "")
             results  = wikipedia.summary(query, sentences=2)
@@ -164,7 +170,9 @@ if __name__ =="__main__":
             speak("Sir do you want me to shutdown the system ?")
             check = takecommand().lower()
             if "yes" in check:
-             os.system("shutdown /s /t 5")          
+             os.system("shutdown /s /t 5")        
+            elif "no" in check:
+                pass   
 
         elif "restart the system" in query:
             speak("Sir do you want me to restart the system ?")
@@ -212,9 +220,11 @@ if __name__ =="__main__":
                  speak("Please try again sometime later")  
            
 
-        if "no thanks" in query:
+        if "no" in query:
             speak("Pleasure to be at your service")
             sys.exit()
-  
 
-        # speak("Is there anything else you want me to do for you?")    
+
+  
+        time.sleep(4)
+        speak("Is there anything else you want me to do for you?")    

@@ -2,19 +2,24 @@
 #pip install pyttsx3
 #pip install pyaudio
 # from datetime import datetime 
-# import pyttsx3
+import pyttsx3
 # import pywhatkit as kit
 # import speech_recognition as sr
 # import requests
-import webbrowser
+# import webbrowser
 # from geopy.geocoders import Nominatim
 # from numpy import place
 from requests import get
 
-ip = get('https://api.ipify.org').content.decode('utf8')
-get_response =  get("http://ip-api.com/json/"+ip).json()   #If we don't use json() it will be byte string not a dictionary so to convert it to from byte string to str then use .json() method
+engine = pyttsx3.init()
+engine.setProperty("rate", 190)
+engine.say("I am the text spoken after changing the speech rate.")
+engine.runAndWait()
+
+# ip = get('https://api.ipify.org').content.decode('utf8')
+# get_response =  get("http://ip-api.com/json/"+ip).json()   #If we don't use json() it will be byte string not a dictionary so to convert it to from byte string to str then use .json() method
 # print(get_response)
-print(f"Sir, we are currently in {get_response['city']} of {get_response['regionName']} having postal code {get_response['zip']}")
+# print(f"Sir, we are currently in {get_response['city']} of {get_response['regionName']} having postal code {get_response['zip']}")
 # data = pgeocode.Nominatim('IN')
 # print(data.query_postal_code(get_response['zip']))
 
