@@ -5,16 +5,18 @@ import os    # To get the access to our windows application like notepad
 import wikipedia    
 import webbrowser
 import pywhatkit as kit
-import sys
+import sys  #Used to exit the program
 import smtplib
 import pyautogui
 import time
 import requests 
+import cv2
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 engine.setProperty('voices',voices[0].id)
-engine.setProperty("rate", 192)
+engine.setProperty("rate", 197)
+
 
 def speak (audio):          #Function that will convert text to speech
     engine.say(audio)
@@ -25,8 +27,8 @@ def takecommand():
     r = sr.Recognizer()
     with sr.Microphone() as source:
         print("listening...")
-        r.pause_threshold = 1.2
-        audio = r.listen(source)
+        r.pause_threshold = 1
+        audio = r.listen(source,timeout=5,phrase_time_limit=5)
 
     try:
         print("Recognizing....") 
@@ -87,7 +89,10 @@ if __name__ =="__main__":
     while True:    #infinite loop
         query = takecommand().lower()
 
-        if "tell me about yourself" in query:
+        if "what is your name" in query:
+            speak("I am Zion")
+
+        elif "tell me about yourself" in query:
              speak("Sir, I am Zion.")
              speak("An desktop voice assistant created for the purpose of serving you.")
              speak("I am able to listen to your commands with the help of Speech Recognition module and able to reply to them with the help of different modules provided by Python ")
@@ -175,10 +180,16 @@ if __name__ =="__main__":
                 pass   
 
         elif "restart the system" in query:
-            speak("Sir do you want me to restart the system ?")
-            check = takecommand().lower()
-            if "yes" in check:
-             os.system("shutdown /r /t 5")
+           try :
+              speak("Sir do you want me to restart the system ?")
+              check = takecommand().lower()
+              if "yes" in check:
+                os.system("shutdown /r /t 5")
+           except Exception as e:
+                 speak("Can you confirm once again?")
+                 check = takecommand().lower()
+                 if "yes" in check:
+                    os.system("shutdown /r /t 5")
 
         elif "go to sleep" in query:
             speak("Sir do you want me to go to sleep ?")
@@ -220,11 +231,23 @@ if __name__ =="__main__":
                  speak("Please try again sometime later")  
            
 
-        if "no" in query:
+        elif "open camera" in query:
+          cap = cv2.VideoCapture(0)
+          while True:
+              ret, img = cap.read()
+              cv2.imshow('webcam',img)
+              k=cv2.waitKey(50)
+              if k==27:
+                  break
+          cap.release()
+          cv2.destroyAllWindows()      
+
+
+        if "stop" in query:
             speak("Pleasure to be at your service")
             sys.exit()
 
 
   
-        time.sleep(4)
-        speak("Is there anything else you want me to do for you?")    
+        # time.sleep(3)
+        # speak("Is there anything else you want me to do for you?")    
