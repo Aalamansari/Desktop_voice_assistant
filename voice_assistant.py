@@ -1,21 +1,20 @@
 from datetime import datetime
+from cv2 import SparseMat_HASH_BIT
 import pyttsx3
 import speech_recognition as sr
 import os    # To get the access to our windows application like notepad
-import wikipedia    
-import webbrowser
 import pywhatkit as kit
 import sys  #Used to exit the program
 import smtplib
 import pyautogui
 import time
 import requests 
-import cv2
 
-engine = pyttsx3.init('sapi5')
-voices = engine.getProperty('voices')
-engine.setProperty('voices',voices[0].id)
-engine.setProperty("rate", 197)
+engine = pyttsx3.init('sapi5')    #initiating an engine from pyttsx3 
+voices = engine.getProperty('voices')  #getting the voices property from the engine
+# engine.setProperty('voices',voices[0].id)  #setting the voice of Zion that would give response to user
+engine.setProperty('language','hi')
+engine.setProperty("rate", 197)    #setting the rate of speed with which the Zion would speak
 
 
 def speak (audio):          #Function that will convert text to speech
@@ -26,9 +25,12 @@ def speak (audio):          #Function that will convert text to speech
 def takecommand():
     r = sr.Recognizer()
     with sr.Microphone() as source:
+        r.adjust_for_ambient_noise(source)
         print("listening...")
+        # r.adjust_for_ambient_noise(source)
         r.pause_threshold = 1
-        audio = r.listen(source,timeout=5,phrase_time_limit=5)
+        r.energy_threshold=350
+        audio = r.listen(source,0,4) #try source,0,4
 
     try:
         print("Recognizing....") 
@@ -38,12 +40,9 @@ def takecommand():
     except Exception as e:
         speak("Please say that again...") 
         return "None"
-    
     return query          
 
-def intro():
-
-
+def Greetme():
     hour  = int(datetime.now().hour)
     if hour>=0 and hour<12:
         speak("Good morning sir")
@@ -55,7 +54,7 @@ def intro():
 
     else:
         speak("Good Evening sir")    
-        speak("Zion at your service")
+        speak("Zion at your service")   
 
 def sendEmail(to,content):
     server = smtplib.SMTP('smtp.gmail.com',587)
@@ -64,7 +63,7 @@ def sendEmail(to,content):
     server.login('aalamansari1712@gmail.com','ShadowFight3@')
     server.sendmail('aalamansari1712@gmail.com',to,content)
     server.close()
-
+    
 def news():
     main_url = 'https://newsapi.org/v2/top-headlines?country=in&apiKey=2ca1d8fcbb354587b5fd92709b0c0217'
     news  = requests.get(main_url).json()
@@ -83,8 +82,8 @@ def news():
         
 
 if __name__ =="__main__":
-    intro()
-    
+    Greetme()
+
     # if 1:  
     while True:    #infinite loop
         query = takecommand().lower()
@@ -92,54 +91,62 @@ if __name__ =="__main__":
         if "what is your name" in query:
             speak("I am Zion")
 
-        elif "tell me about yourself" in query:
-             speak("Sir, I am Zion.")
-             speak("An desktop voice assistant created for the purpose of serving you.")
-             speak("I am able to listen to your commands with the help of Speech Recognition module and able to reply to them with the help of different modules provided by Python ")
+        elif "hello" in query:
+            speak("Hello sir, how are you?")
 
-        elif 'wikipedia' in query:
-            speak('Searching wikipedia...')
-            query = query.replace("wikipedia", "")
-            results  = wikipedia.summary(query, sentences=2)
-            speak("According to Wikipedia,")
-            speak(results)
-            
+        elif "i am fine" in query:
+            speak("Glad to hear that sir") 
+
+        elif "how are you" in query:
+            speak("Perfect and ready to work with you") 
+        
+        elif "thank you" in query:
+            speak("You are welcome sir")
+
+        elif "who is your owner" in query:
+            speak("My owner's are Group 6 of second year of computer engineering at Anjuman-I-Islam's kalsekar technical campus ")                  
+
+        elif "nice" in query or "nice work" in query:
+            speak("Happy to be at your service")
+ 
+        elif "tell me about yourself" in query  or "tell me more about you" in query:
+            speak("Sir, I am Zion.")
+            speak("An desktop voice assistant created for the purpose of serving you.")
+            speak("I am able to listen to your commands with the help of Speech Recognition module and able to reply to them with the help of different modules provided by Python ")
+
+        elif "are you a copy" in query:
+            speak("No, I was created with the  hardship of Group 6")
+
         elif "open notepad" in query:
             notepath = "C:\\windows\\system32\\notepad.exe"
             os.startfile(notepath)
+
+        elif "close notepad" in query:
+        #    if "notepad" in query:
+            speak("Okay sir, closing notepad")
+            os.system("taskkill /f /im notepad.exe") 
+        #    elif "vs code" in query:
+        #        speak("Okay sir, closing vscode")
+        #        os.system("taskkill /f /im Code.exe")     
+        #    elif "chrome" in query:
+        #        speak("Okay sir, closing chrome")
+        #        os.system("taskkill /f /im chrome.exe")
+
+        elif "open" in query:
+            from diffapps import openappweb
+            openappweb(query)
         
-        elif "open youtube" in query:
-            url1 = "youtube.com"
-            chrome_path = r'C:\Program Files\Google\\Chrome\Application\chrome.exe'
-            webbrowser.register('chrome',None,webbrowser.BackgroundBrowser(chrome_path))
-            webbrowser.get('chrome').open_new_tab(url1)
-
-        elif "open chrome" in query:
-            chrome_path = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
-            os.startfile(chrome_path)
-          
-        elif "open stack overflow" in query:
-              url2 = "stackoverflow.com"
-              chrome_path = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
-              webbrowser.register('chrome',None,webbrowser.BackgroundBrowser(chrome_path))
-              webbrowser.get('chrome').open_new_tab(url2)
-
-        elif ".com" in query:
-            chrome_path = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
-            webbrowser.register('chrome',None,webbrowser.BackgroundBrowser(chrome_path))
-            webbrowser.get('chrome').open(query)
-
+        elif "close" in query:
+            from diffapps import closeappweb
+            closeappweb(query)
+  
         elif "time" in query:
             current_time = datetime.now().strftime("%H:%M:%S")
             speak(f"Sir, the current time is {current_time}")
 
         elif "search" in query:
-             query = query.replace("search", "")
-             url = "https://www.google.com/search?q="
-             search_url = url+query
-             chrome_path = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
-             webbrowser.register('chrome',None,webbrowser.BackgroundBrowser(chrome_path))
-             webbrowser.get('chrome').open(search_url)
+            from chromesearch import search
+            search(query)
 
         elif "send a whatsapp message" in query:
              hour_time = int(datetime.now().strftime("%H")) 
@@ -166,11 +173,7 @@ if __name__ =="__main__":
           except Exception as e:
               speak(f"sorry sir, I am not able to sent email to {to}\n")  
 
-        elif "close" in query:
-           if "notepad" in query:
-               speak("Okay sir, closing notepad")
-               os.system("taskkill /f /im notepad.exe") 
-        
+
         elif "shutdown the system" in query:
             speak("Sir do you want me to shutdown the system ?")
             check = takecommand().lower()
@@ -201,21 +204,15 @@ if __name__ =="__main__":
             speak("Please wait sir, fetching the hottest news of the day")
             news()
 
-        elif "switch window" in query:
+        elif "window" in query:
             pyautogui.keyDown("alt")  #keeeps pressing the alt key
             pyautogui.press("tab")
             # time.sleep(1)
             pyautogui.keyUp("alt")
 
-        elif "my location" in query:
-            speak("wait sir, let me check")
-            try:
-                 ip = requests.get('https://api.ipify.org').content.decode('utf8')     #requesting my ip address from the ip-api site and decoding it to utf8 format
-                 get_response =  requests.get("http://ip-api.com/json/"+ip).json()    #requesting my location info in byte string format from ip-api server and converting it into str dict type using json() method
-                 speak(f"Sir, we are currently in {get_response['city']} of {get_response['regionName']} having postal code {get_response['zip']}")
-            except Exception as e:
-                speak("Sir due to network issue I am not able to request data from server")
-                speak("Please try again sometime later")       
+        elif "my location" in query:    
+            from location import mylocation
+            mylocation()
 
         elif "screenshot" in query:
             try:
@@ -229,25 +226,10 @@ if __name__ =="__main__":
             except Exception as e:
                  speak("Sir due to some error I am not able to take screenshot")
                  speak("Please try again sometime later")  
-           
-
-        elif "open camera" in query:
-          cap = cv2.VideoCapture(0)
-          while True:
-              ret, img = cap.read()
-              cv2.imshow('webcam',img)
-              k=cv2.waitKey(50)
-              if k==27:
-                  break
-          cap.release()
-          cv2.destroyAllWindows()      
 
 
-        if "stop" in query:
+        if "stop" in query or "top" in query:
             speak("Pleasure to be at your service")
             sys.exit()
 
 
-  
-        # time.sleep(3)
-        # speak("Is there anything else you want me to do for you?")    
