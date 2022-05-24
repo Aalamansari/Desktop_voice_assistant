@@ -12,7 +12,7 @@ import requests
 
 engine = pyttsx3.init('sapi5')    #initiating an engine from pyttsx3 
 voices = engine.getProperty('voices')  #getting the voices property from the engine
-# engine.setProperty('voices',voices[0].id)  #setting the voice of Zion that would give response to user
+engine.setProperty('voices',voices[0].id)  #setting the voice of Zion that would give response to user
 engine.setProperty('language','hi')
 engine.setProperty("rate", 197)    #setting the rate of speed with which the Zion would speak
 
@@ -25,9 +25,8 @@ def speak (audio):          #Function that will convert text to speech
 def takecommand():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        r.adjust_for_ambient_noise(source)
+        r.adjust_for_ambient_noise(source)  #added for ignoring the external nioses upto a certain range
         print("listening...")
-        # r.adjust_for_ambient_noise(source)
         r.pause_threshold = 1
         r.energy_threshold=350
         audio = r.listen(source,0,4) #try source,0,4
@@ -122,15 +121,9 @@ if __name__ =="__main__":
             os.startfile(notepath)
 
         elif "close notepad" in query:
-        #    if "notepad" in query:
             speak("Okay sir, closing notepad")
             os.system("taskkill /f /im notepad.exe") 
-        #    elif "vs code" in query:
-        #        speak("Okay sir, closing vscode")
-        #        os.system("taskkill /f /im Code.exe")     
-        #    elif "chrome" in query:
-        #        speak("Okay sir, closing chrome")
-        #        os.system("taskkill /f /im chrome.exe")
+    
 
         elif "open" in query:
             from diffapps import openappweb
@@ -162,9 +155,6 @@ if __name__ =="__main__":
 
         elif "email" in query:
           try:    
-            # speak("To whom you want to send email?\n")
-            # to = takecommand().lower()
-            # to =  to.replace(" ","").replace("attherate","@")
             to = "001.ksharif@gmail.com"
             speak("What would you like to send?\n")
             content = takecommand().lower()
@@ -207,7 +197,6 @@ if __name__ =="__main__":
         elif "window" in query:
             pyautogui.keyDown("alt")  #keeeps pressing the alt key
             pyautogui.press("tab")
-            # time.sleep(1)
             pyautogui.keyUp("alt")
 
         elif "my location" in query:    
